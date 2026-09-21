@@ -1,8 +1,8 @@
 class Cipherlab < Formula
   desc "Opinionated workspace for cipher research with AI coding agents"
   homepage "https://github.com/jessewaites/cipherlab"
-  url "https://github.com/jessewaites/cipherlab/releases/download/v0.2.0/cipherlab_0.2.0_source.tar.gz"
-  sha256 "e841d2818e7ffbf88790eb863e292aeba6f99f9ae605ca4dd5484b9f815f5870"
+  url "https://github.com/jessewaites/cipherlab/releases/download/v0.2.1/cipherlab_0.2.1_source.tar.gz"
+  sha256 "8e51fcb79c4787c740358ee8a60a10ad2934aa50f1bef92490caec1bc075c77d"
   license "MIT"
 
   depends_on "go" => :build
@@ -16,6 +16,11 @@ class Cipherlab < Formula
     system bin/"cipherlab", "new", "test-case", "--directory", testpath, "--non-interactive"
     assert_path_exists testpath/"test-case/AGENTS.md"
     assert_path_exists testpath/"test-case/WORKFLOW.md"
+    refute_path_exists testpath/"test-case/scripts/gpu-examples"
+    assert_match "cuda", shell_output("#{bin}/cipherlab examples list")
+    system bin/"cipherlab", "examples", "add", "cuda", "--project", testpath/"test-case"
+    assert_path_exists testpath/"test-case/scripts/gpu-examples/cuda.cu"
+    refute_path_exists testpath/"test-case/scripts/gpu-examples/metal.swift"
     system bin/"cipherlab", "validate", "--project", testpath/"test-case", "--json"
   end
 end
